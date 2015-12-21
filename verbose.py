@@ -36,33 +36,41 @@ class Verbose:
         global _indent_level
         return _indent_level
 
-    def write_std(self, color, string):
+    def _write_std(self, prefix, string, postfix='\n'):
         indent_level = self._get_indent()
 
         if indent_level > 0:
-            color = ''
+            prefix = ''
             indent = '     ' + '  ' * (indent_level - 1)
         else:
             indent = ''
 
-        sys.stdout.write(indent + color + string + '\n')
+        sys.stdout.write(indent + prefix + str(string) + postfix)
+
+    def rewrite(self, string):
+        self._write_std('\r', string, postfix='')
+        return self
+
+    def write(self, string):
+        self._write_std('', string)
+        return self
 
     def debug(self, string):
-        self.write_std(self._debug_color, string)
+        self._write_std(self._debug_color, string)
         return self
 
     def info(self, string):
-        self.write_std(self._info_color, string)
+        self._write_std(self._info_color, string)
         return self
 
     def warning(self, string):
-        self.write_std(self._warn_color, string)
+        self._write_std(self._warn_color, string)
         return self
 
     def error(self, string):
-        self.write_std(self._error_color, string)
+        self._write_std(self._error_color, string)
         return self
 
     def critical(self, string):
-        self.write_std(self._critical_color, string)
+        self._write_std(self._critical_color, string)
         return self
