@@ -36,8 +36,8 @@ class Config:
         v.debug('Adding argparse arguments')
 
         # parser.add_argument(
-        #     '--debug', metavar='debug', type=str, required=True,
-        #     help='Show debug messages.'
+        #     '-f', metavar='filter', type=str, required=True,
+        #     help=''
         # )
         # parser.add_argument(
         #     '--train', metavar='training files', type=str,

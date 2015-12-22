@@ -8,3 +8,4 @@ Audiolyze needs the following packages:
 
 - Audiolazy
 - PyAudio
+- (optional) pavucontrol
