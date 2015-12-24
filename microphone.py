@@ -20,20 +20,19 @@ class Microphone:
         self.record = kwargs['record']
         self.rate = kwargs['rate']
 
-        if filt is not None:
-            v.debug('Filter:\n{}'.format(filt))
-            v.debug('Linearized filter:\n{}'.format(filt.linearize()))
-            v.debug('is LTI: {}'.format(filt.is_lti()))
-            v.debug('is causal: {}'.format(filt.is_causal()))
+        v.debug('Filter:\n{}'.format(filt))
+        v.debug('is LTI: {}'.format(filt.is_lti()))
+        v.debug('is causal: {}'.format(filt.is_causal()))
 
-            if not (filt.numpoly.is_polynomial() and
-                    filt.denpoly.is_polynomial()):
-                v.warning('Filter is not polynomial. linearizing filter...')
-                filt = filt.linearize()
+        if not (filt.numpoly.is_polynomial() and
+                filt.denpoly.is_polynomial()):
+            v.warning('Filter is not polynomial. linearizing filter...')
+            filt = filt.linearize()
+            v.debug('Linearized filter:\n{}'.format(filt))
 
-            if not filt.is_causal():
-                v.error('Non-causal filter given')
-                raise ValueError('Non-causal filter')
+        if not filt.is_causal():
+            v.error('Non-causal filter given')
+            raise ValueError('Non-causal filter')
 
         self.plotable = plotable.Plotable(filt, **kwargs)
 

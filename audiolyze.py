@@ -7,7 +7,7 @@ Audio stream analyzer
 
 import config
 import microphone
-from audiolazy import z, x
+from audiolazy import z
 
 
 class Audiolyze:
@@ -17,5 +17,5 @@ class Audiolyze:
         self.microphone = microphone.Microphone(filt, **self.config.args)
 
 if __name__ == '__main__':
-    filt = 1 - (0.2 * z ** -4.3)
+    filt = 2 + z ** -2
     audiolyze = Audiolyze(filt)

@@ -89,15 +89,17 @@ class Plotable:
             v.debug('Plotting zero-pole plane')
             self.filt.zplot()
 
-    def update_y_lim(self, ax, smax):
+    def update_y_lim(self, ax, ax2, smax):
         top = ax.get_ylim()[1]
         if top < self.dft_max_max and abs(smax / top) > 1:
             ax.set_ylim(top=top * 2)
+            ax2.set_ylim(top=top * 2)
             return True
 
-        # elif top > self.dft_max_min and abs(smax / top) < .2:
-        #     ax.set_ylim(top=top / 2)
-        #     return True
+        elif top > self.dft_max_min and abs(smax / top) < .2:
+            ax.set_ylim(top=top / 2)
+            ax2.set_ylim(top=top / 2)
+            return True
 
         return False
 
@@ -165,11 +167,9 @@ class Plotable:
         self.freq_filt_line.set_data(self.freq_values, spectrum_filt)
 
         smax = spectrum.max()
-        smax_filt = spectrum_filt.max()
-        s1 = self.update_y_lim(self.freq_ax, smax)
-        s2 = self.update_y_lim(self.freq_filt_ax, smax_filt)
+        s1 = self.update_y_lim(self.freq_ax, self.freq_filt_ax, smax)
 
-        if not s1 and not s2:
+        if not s1:
             self.rempty = True
             return [
                 self.time_line,
