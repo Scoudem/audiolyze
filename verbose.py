@@ -9,6 +9,8 @@ Can chain debug output:
 
 import sys
 _indent_level = 0
+_debug = True
+_silent = False
 
 
 class Verbose:
@@ -18,6 +20,14 @@ class Verbose:
     _warn_color = "\x1b[33mWARN\x1b[0m "
     _error_color = "\x1b[31mERR!\x1b[0m "
     _critical_color = "\x1b[31mCRIT\x1b[0m "
+
+    def set_debug(self, state):
+        global _debug
+        _debug = state
+
+    def set_silent(self, state):
+        global _silent
+        _silent = state
 
     def indent(self):
         global _indent_level
@@ -37,6 +47,11 @@ class Verbose:
         return _indent_level
 
     def _write_std(self, prefix, string, postfix='\n'):
+        global _silent
+
+        if _silent:
+            return
+
         indent_level = self._get_indent()
 
         if indent_level > 0:
@@ -52,10 +67,18 @@ class Verbose:
         return self
 
     def write(self, string):
+        if not _debug:
+            return self
+
         self._write_std('', string)
         return self
 
     def debug(self, string):
+        global _debug
+
+        if not _debug:
+            return self
+
         self._write_std(self._debug_color, string)
         return self
 

@@ -16,11 +16,26 @@ v = verbose.Verbose()
 
 class Microphone:
 
-    def __init__(self, filt=None, rate=44100):
-        self.filt = filt
+    def __init__(self, filt, **kwargs):
+        self.record = kwargs['record']
+        self.rate = kwargs['rate']
 
-        self.rate = rate
-        self.plotable = plotable.Plotable(filt=filt, rate=rate)
+        if filt is not None:
+            v.debug('Filter:\n{}'.format(filt))
+            v.debug('Linearized filter:\n{}'.format(filt.linearize()))
+            v.debug('is LTI: {}'.format(filt.is_lti()))
+            v.debug('is causal: {}'.format(filt.is_causal()))
+
+            if not (filt.numpoly.is_polynomial() and
+                    filt.denpoly.is_polynomial()):
+                v.warning('Filter is not polynomial. linearizing filter...')
+                filt = filt.linearize()
+
+            if not filt.is_causal():
+                v.error('Non-causal filter given')
+                raise ValueError('Non-causal filter')
+
+        self.plotable = plotable.Plotable(filt, **kwargs)
 
         v.debug('Registering signal handler')
         signal.signal(signal.SIGINT, self.signal_handler)
@@ -38,6 +53,7 @@ class Microphone:
 
     def _update_data(self):
         v.debug('Listening...')
+        v.info('Your audio API could throw some warnings...')
         with audiolazy.AudioIO() as record:
             for element in record.record(rate=self.rate):
                 self.plotable.append(element)
@@ -46,13 +62,17 @@ class Microphone:
                     break
 
     def start(self):
-        v.debug('Starting recording thread')
-        v.warning('PyAudio could throw some warnings...')
-        self.running = True
-        self.thread.start()
+        if self.record:
+            v.debug('Starting recording thread')
+            self.running = True
+            self.thread.start()
+
         self.plotable.start_animation()
 
     def stop(self):
+        if not self.record:
+            return
+
         v.debug('Stopping recording thread')
         self.running = False
         self.thread.join()
