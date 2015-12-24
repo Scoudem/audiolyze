@@ -132,7 +132,7 @@ class Plotable:
                 blit=True
             )
 
-        plt.ioff()
+        # plt.ioff()
         plt.show()
 
     def init(self):
@@ -153,6 +153,9 @@ class Plotable:
             ]
 
     def animate(self, idx):
+        if idx == 100:
+            plt.savefig('test.png')
+
         array_data = numpy.array(self.data)
         array_data_filt = self.filt(array_data).take(audiolazy.inf)
 
